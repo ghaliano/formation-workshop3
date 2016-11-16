@@ -1,4 +1,7 @@
-<table border="1">
+{% extends 'BlogBundle::layout.html.twig' %}
+{% block titre%}Detail du blog "{{ blog.titre }}"{% endblock %}
+{% block content %}
+<table class="table table-striped">
 	<thead>
 		<tr>
 			<td>ID</td>
@@ -7,12 +10,8 @@
 			<td>Date</td>
 		</tr>
 	</thead>
-		<tr>
-			<td><a href="{{ path ('blog_detail', {id: blog.id})}}">{{ blog.id }}</a></td>
-			<td>{{ blog.titre}}</td>
-			<td>{{ blog.description}}</td>
-			<td>{{ blog.date_creation}}</td>
-		</tr>
+		{% include ('BlogBundle:Default:item.html.twig') %}
 </table>
 <br />
 <a href="{{ path ("blogs") }}">Retour à la liste des blogs</a>
+{% endblock %}

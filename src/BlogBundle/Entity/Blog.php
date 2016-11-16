@@ -43,7 +43,7 @@ class Blog
     private $createdAt;
 
     public function __construct() {
-        $this->createdAt= new \Date();
+        $this->createdAt= new \DateTime();
     }
     /**
      * Get id

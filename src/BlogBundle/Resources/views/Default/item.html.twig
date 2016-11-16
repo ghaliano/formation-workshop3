@@ -1,0 +1,10 @@
+<tr>
+	<td><a href="{{ path ('blog_detail', {id: blog.id})}}">{{ blog.id }}</a></td>
+	<td>{{ blog.titre}}</td>
+	<td>{{ blog.description}}</td>
+	<td>{{ blog.createdAt | date }}</td>
+	<td><a href="{{ path ('blog_edit', {id: blog.id}) }}">Edit</a></td>
+	<td>
+	<a href="{{ path ('blog_delete', {id: blog.id}) }}" onclick="
+	if (! confirm('Voulez vous vraiment supprimer ce blog ?')) { return false; }">Delete</a></td>
+</tr>
