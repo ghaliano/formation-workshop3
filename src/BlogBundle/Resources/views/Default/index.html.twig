@@ -1,0 +1,32 @@
+<form>
+	<input type="text" name="query" />
+	<select name="sort">
+		<option value="id">id</option>
+		<option value="titre">Titre</option>
+		<option value="description">description</option>
+	</select>
+	<select name="order">
+		<option value="asc">Ascendant</option>
+		<option value="desc">Descendant</option>
+	</select>
+	<button type="submit">Filtrer</button>
+</form>
+
+<table border="1">
+	<thead>
+		<tr>
+			<td>ID</td>
+			<td>Titre</td>
+			<td>Description</td>
+			<td>Date</td>
+		</tr>
+	</thead>
+	{% for blog in blogs %}
+		<tr>
+			<td><a href="{{ path ('blog_detail', {id: blog.id})}}">{{ blog.id }}</a></td>
+			<td>{{ blog.titre}}</td>
+			<td>{{ blog.description}}</td>
+			<td>{{ blog.createdAt | date }}</td>
+		</tr>
+	{% endfor %}
+</table>

@@ -1,0 +1,18 @@
+<table border="1">
+	<thead>
+		<tr>
+			<td>ID</td>
+			<td>Titre</td>
+			<td>Description</td>
+			<td>Date</td>
+		</tr>
+	</thead>
+		<tr>
+			<td><a href="{{ path ('blog_detail', {id: blog.id})}}">{{ blog.id }}</a></td>
+			<td>{{ blog.titre}}</td>
+			<td>{{ blog.description}}</td>
+			<td>{{ blog.date_creation}}</td>
+		</tr>
+</table>
+<br />
+<a href="{{ path ("blogs") }}">Retour à la liste des blogs</a>
