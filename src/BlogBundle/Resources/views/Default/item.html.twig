@@ -2,6 +2,7 @@
 	<td><a href="{{ path ('blog_detail', {id: blog.id})}}">{{ blog.id }}</a></td>
 	<td>{{ blog.titre}}</td>
 	<td>{{ blog.description}}</td>
+	<td>{{ blog.category }}</td>
 	<td>{{ blog.createdAt | date }}</td>
 	<td><a href="{{ path ('blog_edit', {id: blog.id}) }}">Edit</a></td>
 	<td>

@@ -7,53 +7,52 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Blog
  *
- * @ORM\Table(name="blog")
- * @ORM\Entity(repositoryClass="BlogBundle\Repository\BlogRepository")
+ * @ORM\Table(name="blog", indexes={@ORM\Index(name="category_id", columns={"category_id"})})
+ * @ORM\Entity
  */
 class Blog
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="titre", type="string", length=255)
+     * @ORM\Column(name="titre", type="string", length=255, nullable=false)
      */
     private $titre;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255)
+     * @ORM\Column(name="description", type="string", length=255, nullable=false)
      */
     private $description;
 
     /**
-     * @var string
+     * @var \DateTime
      *
-     * @ORM\Column(name="created_at", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      */
     private $createdAt;
 
-    public function __construct() {
-        $this->createdAt= new \DateTime();
-    }
     /**
-     * Get id
+     * @var integer
      *
-     * @return int
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $id;
+
+    /**
+     * @var \BlogBundle\Entity\Category
+     *
+     * @ORM\ManyToOne(targetEntity="BlogBundle\Entity\Category")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * })
+     */
+    private $category;
+
+
 
     /**
      * Set titre
@@ -106,7 +105,7 @@ class Blog
     /**
      * Set createdAt
      *
-     * @param string $createdAt
+     * @param \DateTime $createdAt
      *
      * @return Blog
      */
@@ -120,11 +119,44 @@ class Blog
     /**
      * Get createdAt
      *
-     * @return string
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
         return $this->createdAt;
     }
-}
 
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set category
+     *
+     * @param \BlogBundle\Entity\Category $category
+     *
+     * @return Blog
+     */
+    public function setCategory(\BlogBundle\Entity\Category $category = null)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return \BlogBundle\Entity\Category
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+}

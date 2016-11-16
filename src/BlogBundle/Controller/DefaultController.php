@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class DefaultController extends Controller
 {
@@ -67,6 +68,10 @@ class DefaultController extends Controller
         $blog = new Blog();
         $form = $this->createFormBuilder($blog)
         ->add('titre', TextType::class)
+        ->add('category', EntityType::class, array(
+            'class' => 'BlogBundle:Category',
+
+        ))
         ->add('description', TextareaType::class, array('attr' => array('class' => 'form-control', 'placeHolder' => 'Description') ))
         ->add('createdAt', DateType::class)
         ->getForm();
@@ -93,6 +98,10 @@ class DefaultController extends Controller
         $blog = $this->getBlogById($id);
         $form = $this->createFormBuilder($blog)
         ->add('titre', TextType::class)
+        ->add('category', EntityType::class, array(
+            'class' => 'BlogBundle:Category',
+
+        ))
         ->add('description', TextareaType::class, array('attr' => array('class' => 'form-control', 'placeHolder' => 'Description') ))
         ->add('createdAt', DateType::class)
         ->getForm();
