@@ -15,10 +15,10 @@
 		  <div class="header clearfix">
 		    <nav>
 		      <ul class="nav nav-pills pull-right">
-		        <li role="presentation" class="active"><a href="#">Home</a></li>
+		        <li role="presentation" class="active"><a href="{{ path("home") }}">Home</a></li>
 		        <li role="presentation"><a href="{{ path ("blogs") }}">Blogs</a></li>
 		        <li role="presentation"><a href="{{ path ("blog_create") }}">Creer un blog</a></li>
-		        <li role="presentation"><a href="#">Contact</a></li>
+		        <li role="presentation"><a href="{{ path("contact") }}">Contact</a></li>
 		      </ul>
 		    </nav>
 		    <h3 class="text-muted">{% block titre%}{% endblock %}</h3>

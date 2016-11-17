@@ -9,10 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class DefaultController extends Controller
 {
@@ -22,7 +18,7 @@ class DefaultController extends Controller
     public function indexAction(Request $request)
     {
         return $this->render('BlogBundle:Default:index.html.twig', 
-        	array('blogs' => $this->getBlogs(
+        	array('blogs' => $this->get('blog.service')->getBlogs(
         		$request->get('query'), 
         		array($request->get("sort", "id") => $request->get("order", "asc"))
     		))
@@ -34,7 +30,7 @@ class DefaultController extends Controller
      */
     public function detailJsonAction($id)
     {
-    	$response = new JsonResponse($this->getBlogById($id));
+    	$response = new JsonResponse($this->get('blog.service')->getBlogById($id));
 
     	return $response;
     }
@@ -44,7 +40,7 @@ class DefaultController extends Controller
      */
     public function detailAction($id)
     {
-        return $this->render('BlogBundle:Default:detail.html.twig', array('blog' => $this->getBlogById($id)));
+        return $this->render('BlogBundle:Default:detail.html.twig', array('blog' => $this->get('blog.service')->getBlogById($id)));
     }
 
     /**
@@ -66,25 +62,15 @@ class DefaultController extends Controller
     public function createAction(Request $request)
     {
         $blog = new Blog();
-        $form = $this->createFormBuilder($blog)
-        ->add('titre', TextType::class)
-        ->add('category', EntityType::class, array(
-            'class' => 'BlogBundle:Category',
-
-        ))
-        ->add('description', TextareaType::class, array('attr' => array('class' => 'form-control', 'placeHolder' => 'Description') ))
-        ->add('createdAt', DateType::class)
-        ->getForm();
+        $form = $this->get('blog.service')->createForm($blog);
 
         //Binding
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($blog);
-            $em->flush();
+            $this->get('blog.service')->createBlog($blog);
 
-            return $this->redirectToRoute('blogs');
+            //return $this->redirectToRoute('blogs');
         }
 
         return $this->render('BlogBundle:Default:create.html.twig', array('form' => $form->createView()));  
@@ -95,25 +81,14 @@ class DefaultController extends Controller
      */
     public function editAction(Request $request, $id)
     {
-        $blog = $this->getBlogById($id);
-        $form = $this->createFormBuilder($blog)
-        ->add('titre', TextType::class)
-        ->add('category', EntityType::class, array(
-            'class' => 'BlogBundle:Category',
-
-        ))
-        ->add('description', TextareaType::class, array('attr' => array('class' => 'form-control', 'placeHolder' => 'Description') ))
-        ->add('createdAt', DateType::class)
-        ->getForm();
+        $blog = $this->get('blog.service')->getBlogById($id);
+        $form = $this->get('blog.service')->createForm($blog);
 
         //Binding
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($blog);
-            $em->flush();
-
+            $this->get('blog.service')->editBlog($blog);
             return $this->redirectToRoute('blogs');
         }
 
@@ -125,31 +100,14 @@ class DefaultController extends Controller
      */
     public function deleteAction($id)
     {
-        $blog = $this->getBlogById($id);
+        $blog = $this->get('blog.service')->getBlogById($id);
         if (!$blog) {
             $this->addFlash('error', "Blog introuvable " . $id);
         } else {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($blog);
-            $em->flush();
+            $this->get('blog.service')->deleteBlog($blog);
 
             $this->addFlash('success', 'Suppression effectué avec succees !');
         }
         return $this->redirectToRoute('blogs');
-    }
-
-    private function getBlogs($criteria, $tri) {
-    	$filter = $criteria ? array("titre" => $criteria): array();
-    	return $this->getDoctrine()
-    	->getManager()
-    	->getRepository('BlogBundle:Blog')
-    	->findBy($filter, $tri);
-    }
-
-    private function getBlogById($id) {
-        return $this->getDoctrine()
-        ->getManager()
-        ->getRepository('BlogBundle:Blog')
-        ->find($id);
     }
 }

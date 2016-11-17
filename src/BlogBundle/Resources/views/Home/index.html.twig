@@ -1,0 +1,18 @@
+{% extends 'BlogBundle::layout.html.twig' %}
+{% block titre%}Homepage{% endblock %}
+{% block content %}
+<table class="table table-striped">
+		<thead>
+			<tr>
+				<td>ID</td>
+				<td>Titre</td>
+				<td>Description</td>
+				<td>Category</td>
+				<td>Date</td>
+			</tr>
+		</thead>
+		{% for blog in blogs %}
+			{% include ('BlogBundle:Default:item.html.twig') %}
+		{% endfor %}
+	</table>
+{% endblock %}
