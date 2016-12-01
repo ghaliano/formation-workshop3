@@ -26,16 +26,6 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/blog/detail/{id}.json", name="blog_detail_json")
-     */
-    public function detailJsonAction($id)
-    {
-    	$response = new JsonResponse($this->get('blog.service')->getBlogById($id));
-
-    	return $response;
-    }
-
-    /**
      * @Route("/blog/detail/{id}", name="blog_detail")
      */
     public function detailAction($id)
@@ -62,18 +52,25 @@ class DefaultController extends Controller
     public function createAction(Request $request)
     {
         $blog = new Blog();
-        $form = $this->get('blog.service')->createForm($blog);
+        $validator = $this->get('validator');
+        $form = $this->get('blog.service')->createForm($blog, ['validation_groups' => 'create']);
 
         //Binding
         $form->handleRequest($request);
 
+        //$errors = $validator->validate($blog, $form->getData());
+
         if ($form->isSubmitted() && $form->isValid()) {
+        $blog->setTitre("");
             $this->get('blog.service')->createBlog($blog);
 
             //return $this->redirectToRoute('blogs');
         }
 
-        return $this->render('BlogBundle:Default:create.html.twig', array('form' => $form->createView()));  
+        return $this->render('BlogBundle:Default:create.html.twig', array(
+            'form' => $form->createView(),
+            'errors' => $form->getErrors()
+        ));  
     }
 
     /**
@@ -82,7 +79,7 @@ class DefaultController extends Controller
     public function editAction(Request $request, $id)
     {
         $blog = $this->get('blog.service')->getBlogById($id);
-        $form = $this->get('blog.service')->createForm($blog);
+        $form = $this->get('blog.service')->createForm($blog, ['validation_groups' => 'edit']);
 
         //Binding
         $form->handleRequest($request);
@@ -92,7 +89,10 @@ class DefaultController extends Controller
             return $this->redirectToRoute('blogs');
         }
 
-        return $this->render('BlogBundle:Default:create.html.twig', array('form' => $form->createView()));  
+        return $this->render('BlogBundle:Default:create.html.twig', array(
+            'form' => $form->createView(),
+            'errors' => $form->getErrors()
+        ));  
     }
 
     /**

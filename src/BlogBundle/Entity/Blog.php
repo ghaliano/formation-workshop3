@@ -3,6 +3,8 @@
 namespace BlogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use BlogBundle\Constraint\TitleMustBeginWith;
 
 /**
  * Blog
@@ -16,12 +18,13 @@ class Blog
      * @var string
      *
      * @ORM\Column(name="titre", type="string", length=255, nullable=false)
+     * @Assert\NotBlank(groups={"create"})
      */
     private $titre;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank(groups={"create"})
      * @ORM\Column(name="description", type="string", length=255, nullable=false)
      */
     private $description;

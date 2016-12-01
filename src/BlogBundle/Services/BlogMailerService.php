@@ -8,9 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class BlogMailerService {
-	public $em;
-	
-	public $formFactory;
+	public $mailer;
 	
 	public function __construct($mailer) {
 		$this->mailer = $mailer;
