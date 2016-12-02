@@ -1,7 +1,7 @@
 blog:
-    resource: "@BlogBundle/Controller/"
-    type:     annotation
-    prefix:   /
+    resource: "@BlogBundle/Controller/RestfullBlogController.php"
+    type:     rest
+    prefix:   /api/blog/
 
 app:
     resource: "@AppBundle/Controller/"

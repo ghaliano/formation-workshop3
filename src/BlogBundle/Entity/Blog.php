@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use BlogBundle\Constraint\TitleMustBeginWith;
 
+use JMS\Serializer\Annotation as JMS;
+
 /**
  * Blog
  *
@@ -19,6 +21,7 @@ class Blog
      *
      * @ORM\Column(name="titre", type="string", length=255, nullable=false)
      * @Assert\NotBlank(groups={"create"})
+     * @JMS\Groups({"default"})
      */
     private $titre;
 
@@ -26,6 +29,7 @@ class Blog
      * @var string
      * @Assert\NotBlank(groups={"create"})
      * @ORM\Column(name="description", type="string", length=255, nullable=false)
+     * @JMS\Groups({"default"})
      */
     private $description;
 
@@ -33,6 +37,7 @@ class Blog
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     * @JMS\Groups({"default"})
      */
     private $createdAt;
 
@@ -42,6 +47,7 @@ class Blog
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @JMS\Groups({"default"})
      */
     private $id;
 
@@ -52,6 +58,7 @@ class Blog
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * })
+     * @JMS\Groups({"default"})
      */
     private $category;
 
@@ -161,5 +168,22 @@ class Blog
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @JMS\VirtualProperty
+     * @JMS\Groups({"datatable"})
+     * @JMS\Inline()
+     *
+     * @return string
+     */
+    public function getDataTableData(){
+        return [
+            $this->getId(), 
+            $this->getTitre(),
+            $this->getDescription(),
+            $this->getCategory()->getTitre(),
+            $this->getCreatedAt()->format('Y-m-d')
+        ]; 
     }
 }

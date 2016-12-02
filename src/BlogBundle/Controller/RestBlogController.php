@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use JMS\Serializer\SerializationContext;
 
 class RestBlogController extends Controller
 {
@@ -42,26 +43,19 @@ class RestBlogController extends Controller
     		$length,
     		true
 		);
-
-		$data['recordsTotal'] = $data['recordsFiltered'] = count($this->get('blog.service')->getBlogs(
+        
+        $data['recordsTotal'] = $data['recordsFiltered'] = count($this->get('blog.service')->getBlogs(
     		['query' => $search['value']]
 		));
-
-		foreach ($blogs as $blog) {
-			$data['data'][] = [
-				$blog->getId(), 
-				$blog->getTitre(),
-				$blog->getDescription(),
-				$blog->getCategory()->getTitre(),
-				$blog->getCreatedAt()->format('Y-m-d'), 
-			];
-		} 
+    
+		$data['data'] = $blogs;
 
     	$response = new Response();
     	$response->headers->set("Content-Type", "application/json");
-    	$response->headers->set('Access-Control-Allow-Origin', '*');
     	
-    	$response->setContent(json_encode($data));
+    	$response->setContent($this->get('jms_serializer')->serialize(
+            $data, 'json', SerializationContext::create()->setGroups(array('datatable'))
+        ));
 
     	return $response;
     }
@@ -71,16 +65,15 @@ class RestBlogController extends Controller
      */
     public function detailJsonAction($id)
     {
-        $blog = $this->get('blog.service')->getBlogById($id);
+        $response = new Response();
+        $response->headers->set("Content-Type", "application/json");
+        $response->setContent($this->get('jms_serializer')->serialize(
+            $this->get('blog.service')->getBlogById($id),
+            "json",
+            SerializationContext::create()->setGroups(array('datatable'))
+        ));
 
-    	$response = new JsonResponse([
-            'id' => $blog->getId(),
-            'titre' => $blog->getTitre(),
-            'description' => $blog->getDescription(),
-            'created_at' => $blog->getCreatedAt()->format('Y-m-d')
-        ]);
-
-    	return $response;
+        return $response;
     }
 
     /**
@@ -117,6 +110,8 @@ class RestBlogController extends Controller
         $form = $this->get('blog.service')->createForm($blog, ['validation_groups' => 'edit']);
         
         $form->handleRequest($request);
+
+        $this->get('logger')->log('');
 
         if ($form->isValid()) {
             $this->get('blog.service')->editBlog($blog);
